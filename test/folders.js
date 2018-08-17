@@ -151,20 +151,6 @@ describe('Noteful API - Folders', function () {
         });
     });
 
-    it('should return an error when given a duplicate name', function () {
-      return Folder.findOne()
-        .then(data => {
-          const newItem = { 'name': data.name };
-          return chai.request(app).post('/api/folders').send(newItem);
-        })
-        .then(res => {
-          expect(res).to.have.status(400);
-          expect(res).to.be.json;
-          expect(res.body).to.be.a('object');
-          expect(res.body.message).to.equal('Folder name already exists');
-        });
-    });
-
   });
 
   describe('PUT /api/folders/:id', function () {
@@ -185,7 +171,6 @@ describe('Noteful API - Folders', function () {
           expect(res.body.id).to.equal(data.id);
           expect(res.body.name).to.equal(updateItem.name);
           expect(new Date(res.body.createdAt)).to.eql(data.createdAt);
-          // expect item to have been updated
           expect(new Date(res.body.updatedAt)).to.greaterThan(data.updatedAt);
         });
     });
@@ -225,23 +210,6 @@ describe('Noteful API - Folders', function () {
           expect(res).to.be.json;
           expect(res.body).to.be.a('object');
           expect(res.body.message).to.equal('Missing `name` in request body');
-        });
-    });
-
-    it('should return an error when given a duplicate name', function () {
-      return Folder.find().limit(2)
-        .then(results => {
-          const [item1, item2] = results;
-          item1.name = item2.name;
-          return chai.request(app)
-            .put(`/api/folders/${item1.id}`)
-            .send(item1);
-        })
-        .then(res => {
-          expect(res).to.have.status(400);
-          expect(res).to.be.json;
-          expect(res.body).to.be.a('object');
-          expect(res.body.message).to.equal('Folder name already exists');
         });
     });
 
